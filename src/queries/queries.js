@@ -15,15 +15,29 @@ const categoriesQuery = gql`
       name
       products{
         id
-        name
-        inStock
-        gallery
-        prices{
-          amount
-          currency{
-            symbol
-          }
+      name
+      brand
+      prices{
+        amount
+        currency{
+          label
+          symbol
         }
+      }
+      inStock
+      gallery
+      category
+      attributes{
+        id
+        name
+        type
+        items{
+          id
+          value
+          displayValue
+        }
+      }
+      description
       }
     }
   }

@@ -1,4 +1,4 @@
-import { Component } from "react";
+import React, { Component } from "react";
 import Modal from "./Modal";
 import { RiShoppingBag2Fill } from "react-icons/ri";
 import { FiShoppingCart } from "react-icons/fi";
@@ -6,6 +6,7 @@ import { LoadingConsumer, CartContext } from "../helper/Context";
 import { Link } from "react-router-dom";
 import PriceSelectionModal from "./PriceSelectionModal";
 import { Currency } from "../queries/queries";
+import { categoriesQuery } from "../queries/queries";
 import { Query } from "@apollo/client/react/components";
 
 class Navbar extends Component {
@@ -13,8 +14,8 @@ class Navbar extends Component {
     super(props);
     this.state = {
       clickedCart: false,
-      clickedPrice: false,
     };
+    this.navRef = React.createRef();
   }
 
   ClickedCart() {
@@ -29,82 +30,77 @@ class Navbar extends Component {
     });
   }
 
-  PriceClick() {
-    if (this.state.clickedPrice === false) {
-      this.setState({
-        clickedCart: this.state.clickedCart,
-        clickedPrice: true,
-      });
-    } else {
-      this.setState({
-        clickedCart: this.state.clickedCart,
-        clickedPrice: false,
-      });
-    }
-  }
-
   render() {
     const { qty } = this.context;
     return (
       <LoadingConsumer>
-        {({load, select}) => {
+        {({load, select, clickedPrice, priceClick, outsidePriceClick }) => {
           return (
-            <div className="nav-container">
-          <ul className="nav-list">
-            <li onClick={(e) => load(e)}>
-              <Link to={"/"}>
-                <p>ALL</p>
-              </Link>
-            </li>
-            <li onClick={(e) => load(e)}>
-              <Link to={"/"}>
-                <p>CLOTHES</p>
-              </Link>
-            </li>
-            <li onClick={(e) => load(e)}>
-              <Link to={"/"}>
-                <p>TECH</p>
-              </Link>
-            </li>
-          </ul>
+            <div ref={this.navRef} className="nav-container" onClick={(e) => {if(this.navRef.current === e.target){outsidePriceClick()}}}>
+              <Query query={categoriesQuery}>
+                {({ loading, error, data }) => {
+                  if (loading) {
+                    return;
+                  } else if (error) {
+                    return;
+                  } else {
+                    const categories = data.categories;
+                    return (
+                      <ul className="nav-list">
+                        {categories
+                          .filter((cat) => {
+                            return cat.name !== "all";
+                          })
+                          .map((cat) => {
+                            return (
+                              <li key={cat.name} >
+                                <Link to="/">
+                                  <p onClick={(e) => load(e)}>{cat.name.toUpperCase()}</p>
+                                </Link>
+                              </li>
+                            );
+                          })}
+                      </ul>
+                    );
+                  }
+                }}
+              </Query>
 
-          <RiShoppingBag2Fill className="store-icon" />
+              <RiShoppingBag2Fill className="store-icon" />
 
-          <div className="nav-item">
-            <Query query={Currency}>
-              {({ loading, error, data }) => {
-                if (loading) {
-                  return;
-                } else if (error) {
-                  return;
-                } else {
-                  const currencySymbol = data.currencies;
-                  return (
-                    <p className="currency-symbol">
-                      {currencySymbol[select].symbol}
-                    </p>
-                  );
-                }
-              }}
-            </Query>
+              <div className="nav-item">
+                <Query query={Currency}>
+                  {({ loading, error, data }) => {
+                    if (loading) {
+                      return;
+                    } else if (error) {
+                      return;
+                    } else {
+                      const currencySymbol = data.currencies;
+                      return (
+                        <p className="currency-symbol">
+                          {currencySymbol[select].symbol}
+                        </p>
+                      );
+                    }
+                  }}
+                </Query>
 
-            <button className="price-button" onClick={() => this.PriceClick()}>
-              {this.state.clickedPrice ? "^" : "v"}
-            </button>
-            {this.state.clickedPrice && (
-              <PriceSelectionModal priceClick={this.PriceClick.bind(this)} />
-            )}
-            <FiShoppingCart
-              className="nav-cart"
-              onClick={() => this.ClickedCart()}
-            />
-            <span>{qty}</span>
-          </div>
-          {this.state.clickedCart && (
-            <Modal clickedModal={this.ClickedModal.bind(this)} />
-          )}
-        </div>
-          )
+                <button className="price-button" onClick={() => priceClick()}>
+                  {clickedPrice ? "^" : "v"}
+                </button>
+                {clickedPrice && <PriceSelectionModal />}
+                <FiShoppingCart
+                  className="nav-cart"
+                  onClick={() => this.ClickedCart()}
+                />
+                <span>{qty}</span>
+              </div>
+              {this.state.clickedCart && (
+                <Modal clickedModal={this.ClickedModal.bind(this)} />
+              )}
+            </div>
+          );
         }}
       </LoadingConsumer>
     );

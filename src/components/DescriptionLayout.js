@@ -3,20 +3,19 @@ import { Component } from "react";
 import { productQuery } from "../queries/queries";
 import { Query } from "@apollo/client/react/components";
 import { LoadingConsumer, CartContext } from "../helper/Context";
-
+import parse from "html-react-parser";
 
 class DescriptionLayout extends Component {
   constructor(props) {
     super(props);
     this.state = {
       src: props.data.gallery[0],
-      att1: null,
-      att2: [],
-      colorId: "",
-      otherId1: "",
-      otherId2: "",
-      otherId3: ""
-      
+      attributes: {
+        color: "",
+        others0: "",
+        others1: "",
+        others2: "",
+      },
     };
   }
 
@@ -26,24 +25,12 @@ class DescriptionLayout extends Component {
     });
   }
 
-  SelectedAtt(e) {
-    if (e.target.name === "att1") {
-      this.setState({src: this.state.src, att1: e.target.value, att2: this.state.att2, colorId: e.target.id, otherId: this.state.otherId})
-    }else if (e.target.name === "att2") {
-      this.setState({src: this.state.src, att1: this.state.att1, att2: [...this.state.att2, e.target.value], colorId: this.state.colorId, otherId1: e.target.id})
-    }else if (e.target.name === "att3") {
-      this.setState({src: this.state.src, att1: this.state.att1, att2: [...this.state.att2, e.target.value], colorId: this.state.colorId, otherId1: this.state.otherId1, otherId2: e.target.id})
-    }else if (e.target.name === "att4") {
-      this.setState({src: this.state.src, att1: this.state.att1, att2: [...this.state.att2, e.target.value], colorId: this.state.colorId, otherId1: this.state.otherId1, otherId2: this.state.otherId2, otherId3: e.target.id})
-    }
-  }
-
- 
   render() {
-    const { selectedItem } = this.context
+    // console.log(this.state.attributes);
+    const { selectedItem } = this.context;
     return (
       <LoadingConsumer>
-        {({ select }) => {
+        {({ select, outsidePriceClick }) => {
           return (
             <Query
               query={productQuery}
@@ -57,7 +44,10 @@ class DescriptionLayout extends Component {
                 } else {
                   const product = data.product;
                   return (
-                    <div className="description-container">
+                    <div
+                      className="description-container"
+                      onClick={() => outsidePriceClick()}
+                    >
                       <div className="description-image-list">
                         {product.gallery.map((pic) => {
                           return (
@@ -71,18 +61,21 @@ class DescriptionLayout extends Component {
                           );
                         })}
                       </div>
-                      <div>
+                      <div className="big-image">
                         <img
                           className="description-image1"
                           src={this.state.src}
                           alt="Click the images on the left"
                         />
+                        {product.inStock ? null : (
+                          <p className="description-page-stock">Out Of Stock</p>
+                        )}
                       </div>
                       <div className="description-info">
                         <h1>{product.name}</h1>
                         <h3>{product.brand}</h3>
                         <div>
-                          {product.attributes.map((att) => {
+                          {product.attributes.map((att, index) => {
                             if (att.type === "swatch") {
                               return (
                                 <div key={att.id}>
@@ -91,71 +84,35 @@ class DescriptionLayout extends Component {
                                   </h4>
                                   <div className="att-div">
                                     {att.items.map((item) => {
-                                      const id = item.id
+                                      const value = item.value;
                                       return (
                                         <button
                                           className="att-item"
                                           key={item.id}
                                           id={item.id}
-                                          name="att1"
+                                          name="color-att"
                                           value={item.value}
-                                          onClick={(e) => this.SelectedAtt(e)}
-                                          style={id === this.state.colorId ? {backgroundColor: `${item.value}`, border: "1px solid #5ECE7B"}:{
-                                            backgroundColor: `${item.value}`
+                                          onClick={(e) => {
+                                            this.setState({
+                                              ...this.state,
+                                              attributes: {
+                                                ...this.state.attributes,
+                                                color: e.target.value,
+                                              },
+                                            });
                                           }}
+                                          style={
+                                            value ===
+                                            this.state.attributes.color
+                                              ? {
+                                                  backgroundColor: `${item.value}`,
+                                                  border: "1px solid #5ECE7B",
+                                                }
+                                              : {
+                                                  backgroundColor: `${item.value}`,
+                                                }
+                                          }
                                         ></button>
-                                      );
-                                    })}
-                                  </div>
-                                </div>
-                              );
-                            } else if(att.name === "With USB 3 ports") {
-                              return (
-                                <div key={att.id}>
-                                  <h4 className="att-name">
-                                    {att.name.toUpperCase()}:
-                                  </h4>
-                                  <div className="att-div">
-                                    {att.items.map((item) => {
-                                      const id = item.id
-                                      return (
-                                        <button
-                                          className="att-item1"
-                                          key={item.id}
-                                          id={item.id}
-                                          style={id === this.state.otherId2 ? {backgroundColor: "black", color: "white"} : null}
-                                          name="att3"
-                                          value={item.value}
-                                          onClick={(e) => this.SelectedAtt(e)}
-                                        >
-                                          {item.value}
-                                        </button>
-                                      );
-                                    })}
-                                  </div>
-                                </div>
-                              );
-                            } else if(att.name === "Touch ID in keyboard") {
-                              return (
-                                <div key={att.id}>
-                                  <h4 className="att-name">
-                                    {att.name.toUpperCase()}:
-                                  </h4>
-                                  <div className="att-div">
-                                    {att.items.map((item) => {
-                                      const id = item.id
-                                      return (
-                                        <button
-                                          className="att-item1"
-                                          key={item.id}
-                                          id={item.id}
-                                          style={id === this.state.otherId3 ? {backgroundColor: "black", color: "white"} : null}
-                                          name="att4"
-                                          value={item.value}
-                                          onClick={(e) => this.SelectedAtt(e)}
-                                        >
-                                          {item.value}
-                                        </button>
                                       );
                                     })}
                                   </div>
@@ -165,20 +122,65 @@ class DescriptionLayout extends Component {
                               return (
                                 <div key={att.id}>
                                   <h4 className="att-name">
-                                    {att.name.toUpperCase()}:
+                                    {att.name.toUpperCase()}
                                   </h4>
                                   <div className="att-div">
                                     {att.items.map((item) => {
-                                      const id = item.id
+                                      const value = item.value;
                                       return (
                                         <button
                                           className="att-item1"
-                                          key={item.id}
-                                          id={item.id}
-                                          style={id === this.state.otherId1 ? {backgroundColor: "black", color: "white"} : null}
-                                          name="att2"
+                                          name="other-att"
                                           value={item.value}
-                                          onClick={(e) => this.SelectedAtt(e)}
+                                          key={item.id}
+                                          style={
+                                            value ===
+                                            this.state.attributes.others0
+                                              ? {
+                                                  backgroundColor: "black",
+                                                  color: "white",
+                                                }
+                                              : value ===
+                                                this.state.attributes.others1 && index === 1
+                                              ? {
+                                                  backgroundColor: "black",
+                                                  color: "white",
+                                                }
+                                              : value ===
+                                                this.state.attributes.others2 && index === 2
+                                              ? {
+                                                  backgroundColor: "black",
+                                                  color: "white",
+                                                }
+                                              : null
+                                          }
+                                          onClick={(e) => {
+                                            if (index === 0) {
+                                              this.setState({
+                                                ...this.state,
+                                                attributes: {
+                                                  ...this.state.attributes,
+                                                  others0: e.target.value,
+                                                },
+                                              });
+                                            } else if (index === 1) {
+                                              this.setState({
+                                                ...this.state,
+                                                attributes: {
+                                                  ...this.state.attributes,
+                                                  others1: e.target.value,
+                                                },
+                                              });
+                                            } else if (index === 2) {
+                                              this.setState({
+                                                ...this.state,
+                                                attributes: {
+                                                  ...this.state.attributes,
+                                                  others2: e.target.value,
+                                                },
+                                              });
+                                            }
+                                          }}
                                         >
                                           {item.value}
                                         </button>
@@ -200,15 +202,67 @@ class DescriptionLayout extends Component {
                             {product.prices[select].amount}
                           </p>
                         </div>
-                        <button className="add-to-cart-button" onClick={() => selectedItem(this.props.data, this.state, select)}>
+                        <button
+                          className="add-to-cart-button"
+                          onClick={() => {
+                            if (product.inStock) {
+                              if (product.attributes.length === 2) {
+                                if (
+                                  this.state.attributes.color.length > 0 &&
+                                  this.state.attributes.others0.length > 0
+                                ) {
+                                  selectedItem(
+                                    product,
+                                    this.state.attributes,
+                                  );
+                                } else {
+                                  return;
+                                }
+                              } else if (product.attributes.length === 1) {
+                                if (
+                                  this.state.attributes.color.length > 0 ||
+                                  this.state.attributes.others0.length > 0
+                                ) {
+                                  selectedItem(
+                                    product,
+                                    this.state.attributes,
+                                  );
+                                } else {
+                                  return;
+                                }
+                              } else if (product.attributes.length < 1) {
+                                selectedItem(
+                                  product,
+                                  this.state,
+                                );
+                              } else if (
+                                product.attributes.length > 2 &&
+                                product.attributes.type !== "swatch"
+                              ) {
+                                if (
+                                  this.state.attributes.color.length === 0 &&
+                                  this.state.attributes.others0.length > 0 &&
+                                  this.state.attributes.others1.length > 0 &&
+                                  this.state.attributes.others2.length > 0
+                                ) {
+                                  selectedItem(
+                                    product,
+                                    this.state.attributes,
+                                  );
+                                } else {
+                                  return;
+                                }
+                              }
+                            } else {
+                              return;
+                            }
+                          }}
+                        >
                           ADD TO CART
                         </button>
-                        <div
-                          className="description"
-                          dangerouslySetInnerHTML={{
-                            __html: product.description,
-                          }}
-                        ></div>
+                        <div className="description">
+                          {parse(`${product.description}`)}
+                        </div>
                       </div>
                     </div>
                   );

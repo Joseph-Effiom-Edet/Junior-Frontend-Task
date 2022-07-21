@@ -3,6 +3,8 @@ import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import { CartConsumer, LoadingContext } from "../helper/Context";
 import { Link } from "react-router-dom";
+import { Query } from "@apollo/client/react/components";
+import { Currency } from "../queries/queries";
 
 class Modal extends Component {
   constructor(props) {
@@ -21,7 +23,10 @@ class Modal extends Component {
     return ReactDOM.createPortal(
       <CartConsumer>
         {({ cartItem, qty, selectedItem, removeItem }) => {
-          const itemsPrice = cartItem.reduce((a, b) => a + b.prices[select].amount * b.qty, 0);
+          const itemsPrice = cartItem.reduce(
+            (a, b) => a + b.prices[select].amount * b.qty,
+            0
+          );
           const taxPrice = itemsPrice * 0.21;
           const total = itemsPrice + taxPrice;
           return (
@@ -58,7 +63,7 @@ class Modal extends Component {
                     </h5>
                     {cartItem.map((item) => {
                       return (
-                        <div key={item.name}>
+                        <div key={item.cartId}>
                           <div className="modal-item-details">
                             <div>
                               <h1>{item.name}</h1>
@@ -72,83 +77,76 @@ class Modal extends Component {
                                 </p>
                               </div>
                               <div>
-                                {item.attributes.map((att) => {
-                                  if (att.type === "swatch") {
+                                {item.attributes.map((att, index) => {
+                                   if(att.type === "swatch") {
                                     return (
                                       <div key={att.id}>
-                                        {item.color ? (
-                                          <h3 className="modal-att-name">
-                                            {att.name}:
-                                          </h3>
-                                        ) : null}
-                                        {item.color ? (
-                                          <button
-                                            className="color-att"
-                                            style={{
-                                              backgroundColor: `${item.color}`,
-                                            }}
-                                          ></button>
-                                        ) : null}
+                                        <h4 className="modal-att-name">{att.name}</h4>
+                                        <div>{att.items.map(attItem => {
+                                          const value = attItem.value;
+                                          return (
+                                            <button
+                                            key={item.id}
+                                            className="modal-color-att"
+                                            style={
+                                            value ===
+                                            item.color
+                                              ? {
+                                                  backgroundColor: `${attItem.value}`,
+                                                  border: "1px solid #5ECE7B",
+                                                }
+                                              : {
+                                                  backgroundColor: `${attItem.value}`,
+                                                }
+                                          }></button>
+                                          )
+                                        })}</div>
                                       </div>
-                                    );
-                                  } else if (att.name === "Size") {
+                                    )
+                                   }else {
                                     return (
                                       <div key={att.id}>
-                                        <h3 className="modal-att-name">
-                                          {att.name}:
-                                        </h3>
-                                        <button className="other-att">
-                                          {item.other[0]}
-                                        </button>
+                                        <h4 className="modal-att-name">{att.name}</h4>
+                                        <div>{att.items.map(attItem => {
+                                          const value = attItem.value;
+                                          return (
+                                            <button key={attItem.id} className="modal-other-att" style={
+                                            value ===
+                                            item.others0
+                                              ? {
+                                                  backgroundColor: "black",
+                                                  color: "white",
+                                                }
+                                              : value ===
+                                                item.others1 && index === 1
+                                              ? {
+                                                  backgroundColor: "black",
+                                                  color: "white",
+                                                }
+                                              : value ===
+                                                item.others2 && index === 2
+                                              ? {
+                                                  backgroundColor: "black",
+                                                  color: "white",
+                                                }
+                                              : null
+                                          }>{attItem.value}</button>
+                                          )
+                                        })}</div>
                                       </div>
-                                    );
-                                  } else if (att.name === "Capacity") {
-                                    return (
-                                      <div key={att.id}>
-                                        <h3 className="modal-att-name">
-                                          {att.name}:
-                                        </h3>
-                                        <button className="other-att">
-                                          {item.other[0]}
-                                        </button>
-                                      </div>
-                                    );
-                                  } else if (att.name === "With USB 3 ports") {
-                                    return (
-                                      <div key={att.id}>
-                                        <h3 className="modal-att-name">
-                                          {att.name}:
-                                        </h3>
-                                        <button className="other-att">
-                                          {item.other[1]}
-                                        </button>
-                                      </div>
-                                    );
-                                  } else if (
-                                    att.name === "Touch ID in keyboard"
-                                  ) {
-                                    return (
-                                      <div key={att.id}>
-                                        <h3 className="modal-att-name">
-                                          {att.name}:
-                                        </h3>
-                                        <button className="other-att">
-                                          {item.other[2]}
-                                        </button>
-                                      </div>
-                                    );
-                                  }
+                                    )
+                                   }
                                 })}
                               </div>
                             </div>
                             <div className="modal-item-selection">
                               <div className="modal-item-select">
                                 <button
-                                  onClick={() => selectedItem(item, null)}
+                                  onClick={() => selectedItem(item, item)}
                                 >
                                   +
                                 </button>
-                                <span>{item.qty}</span>
+                                <span className="modal-qty">{item.qty}</span>
                                 <button onClick={() => removeItem(item)}>
                                   -
                                 </button>
@@ -159,13 +157,28 @@ class Modal extends Component {
                         </div>
                       );
                     })}
-                    <p className="total">
-                      Total: <span>${total.toFixed(2)}</span>
-                    </p>
-                    <Link to={"/cart"}>
-                      <button className="view-bag">VIEW BAG</button>
-                    </Link>
-                    <button className="check-out">CHECK OUT</button>
+                    <Query query={Currency}>
+                      {({ loading, error, data }) => {
+                        if (loading) {
+                          return;
+                        } else if (error) {
+                          return;
+                        } else {
+                          const currencySymbol = data.currencies;
+                          return (
+                            <div>
+                              <p className="total">
+                                Total: <span>{currencySymbol[select].symbol}{total.toFixed(2)}</span>
+                              </p>
+                              <Link to={"/cart"}>
+                                <button className="view-bag">VIEW BAG</button>
+                              </Link>
+                              <button className="check-out">CHECK OUT</button>
+                            </div>
+                          );
+                        }
+                      }}
+                    </Query>
                   </div>
                 </div>
               )}

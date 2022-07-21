@@ -17,9 +17,9 @@ class PriceSelectionModal extends Component {
             const currencies = data.currencies;
             return (
               <div className="currency-modal">
-                {currencies.map((currency) => {
+                {currencies.map((currency, index) => {
                   return (
-                    <div key={currency.label} onClick={() => {this.props.priceClick()}}><p onClick={(e) => selection(e)}>
+                    <div key={currency.label}><p onClick={() => selection(index)}>
                       {currency.symbol} {currency.label}
                     </p></div>
                   );

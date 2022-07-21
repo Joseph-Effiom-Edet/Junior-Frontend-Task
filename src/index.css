@@ -124,7 +124,7 @@ select {
     padding: 32px 16px;
     overflow-y: scroll;
     width: 340px;
-    height: 370px;
+    height: 577px;
     
 }
 
@@ -167,7 +167,7 @@ select {
     font-weight: 500;
     width: 200px;
     height: 100px;
-    margin-top: 65px;
+    margin: 160px 0 140px 0;
 }
 
 .modal-att-name {
@@ -177,23 +177,22 @@ select {
     margin-bottom: 5px;
 }
 
-.color-att {
+.modal-color-att {
     width: 20px;
     height: 20px;
-    border: 1px solid #5ECE7B;
-    margin-bottom: 10px;
+    border: 1px solid #1D1F22;
+    margin-right: 5px;
 }
 
-.other-att {
+.modal-other-att {
     width: 40px;
     height: 24px;
-    border: 1px solid #1D1F22;
-    background-color: #1D1F22;
-    color: white;
-    font-size: 14px;
-    font-family: 'Source Sans Pro';
+    background-color: #FFFFFF;
+    margin: 0 5px 10px 0;
+    font-family: "Source Sans Pro";
     font-weight: 400;
-    margin-bottom: 10px;
+    font-size: 14px;
+    border: 1px solid #1D1F22;
 }
 
 .modal-item-selection {
@@ -204,7 +203,7 @@ select {
 .modal-item-selection img{
     width: 121px;
     height: 190px;
-    object-fit: contain;
+    /* object-fit: contain; */
 }
 
 .modal-item-select {
@@ -230,14 +229,21 @@ select {
     color: white;
     background-color: black;
 }
+
+.modal-qty {
+    font-family: Raleway;
+    font-weight: 500;
+    font-size: 16px;
+}
+
 .total {
     margin: 30px 0;
-    font-family: 'Roboto Condensed';
+    font-family: 'Roboto';
     font-weight: 500;
     font-size: 16px;
 }
 .total span {
-    margin-left: 185px;
+    margin-left: 160px;
     font-family: Raleway;
     font-size: 16px;
     font-weight: 700;
@@ -246,11 +252,11 @@ select {
 .view-bag {
     background-color: #FFFFFF;
     height: 43px;
-    width: 140px;
+    width: 130px;
     color: black;
     border: 1px solid #1D1F22;
-    margin-right:5px;
     cursor: pointer;
+    margin-right: 10px;
     font-family: Raleway;
     font-size: 14px;
     font-weight: 600;
@@ -259,7 +265,7 @@ select {
 .check-out {
     background-color: #5ECE7B;
     height: 43px;
-    width: 140px;
+    width: 130px;
     color: white;
     border: none;
     margin-left: 5px;
@@ -308,17 +314,17 @@ select {
     font-family: Raleway;
     font-size: 42px;
     font-weight: 400;
-    margin: 50px;
-    margin-bottom: 20px;
+    padding: 30px 50px 10px 50px;
+    
 }
 
 .product-container {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    column-gap: 9em;
+    column-gap: 3em;
     row-gap: 5em;
     padding: 0 50px 50px 50px;
-    margin-top: 50px;
+    margin-top: 30px;
 }
 
 .product-container a {
@@ -327,14 +333,16 @@ select {
 }
 
 .product-image {
-    width: 300px;
-    height: 340px;
+    width: 356px;
+    height: 338px;
 }
 
 .card {
-    padding: 10px 10px;
+    padding: 15px 0 0 15px;
     background-color: fff;
     position: relative;
+    width: 386px;
+    height: 444px;
 }
 
 .card h4 {
@@ -395,13 +403,13 @@ select {
 .description-container {
     display: grid;
     grid-template-columns: repeat(3, 1fr 2fr);
-    column-gap: 10em;
-    margin: 40px 40px;
+    column-gap: 3em;
+    padding: 40px 40px;
 }
 
 .description-image {
-    width: 127.65px;
-    height: 87.61px;
+    width: 79px;
+    height: 80px;
     margin-bottom: 10px;
     cursor: pointer;
 }
@@ -411,15 +419,30 @@ select {
 }
 
 .description-image1 {
-    width: 386px;
-    height: 444px;
-    margin-left: 50px;
+    width: 610px;
+    height: 511px;
+    
     
 }
 
 .description-image-list {
     display: flex;
     flex-direction: column;
+}
+
+.big-image {
+    position: relative;
+    height: 444px;
+}
+
+.description-page-stock {
+    color:#71737a;
+    font-family: Raleway;
+    font-weight: 400;
+    font-size: 46px;
+    position: absolute;
+    bottom: 250px;
+    left: 100px;
 }
 
 .description-info {
@@ -504,15 +527,21 @@ select {
     cursor: pointer;
 }
 
-.description h3 {
-    font-family: 'Roboto Condensed';
+.description {
+    font-family: "Roboto";
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.description h3, .description h1 {
+    font-family: 'Roboto';
     font-size: 30px;
     font-weight: 700;
     margin-bottom: 0;
 }
 
 .description p {
-    font-family: 'Roboto Condensed';
+    font-family: 'Roboto';
     font-size: 16px;
     font-weight: 400;
     margin-bottom: 10px;
@@ -528,9 +557,8 @@ select {
 
 hr {
     background: #E5E5E5;
-    width: 1240px;
+    width: 100%;
     height: 1px;
-    margin: 0 50px;
 }
 
 .cart-container {
@@ -575,25 +603,22 @@ hr {
 }
 
 .cart-color-att {
-    width: 32px;
-    height: 32px;
-    border: 1px solid #5ECE7B;
-    margin-bottom: 10px;
+    width: 36px;
+    height: 36px;
+    border: 1px solid #1D1F22;
+    margin-right: 10px;
 }
 
 .cart-other-att {
     width: 63px;
     height: 45px;
-    border: 1px solid #1D1F22;
-    background-color: #1D1F22;
-    color: white;
-    margin-bottom: 20px;
-    font-size: 16px;
-    font-family: 'Source Sans Pro';
+    background-color: #FFFFFF;
+    margin: 0 10px 10px 0;
+    font-family: "Source Sans Pro";
     font-weight: 400;
+    font-size: 16px;
+    border: 1px solid #1D1F22;
 }
-
-
 
 .cart-item-selection-image {
     display: flex;
@@ -625,6 +650,12 @@ hr {
 .cart-item-select button:hover {
     color: white;
     background-color: black;
+}
+
+.qty {
+    font-family: Raleway;
+    font-weight: 500;
+    font-size: 24px;
 }
 
 .shopping-bag-details {

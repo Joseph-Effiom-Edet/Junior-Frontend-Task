@@ -6,9 +6,9 @@ import { LoadingContext } from "../helper/Context";
 
 class Products extends Component {
   render() {
-    const { filter, select } = this.context;
+    const { filter, select, outsidePriceClick } = this.context;
     return (
-      <>
+      <div  onClick={() => outsidePriceClick()}>
         <Query query={categoriesQuery}>
           {({ loading, error, data }) => {
             if (loading) {
@@ -62,7 +62,7 @@ class Products extends Component {
             }
           }}
         </Query>
-      </>
+      </div>
     );
   }
 }
