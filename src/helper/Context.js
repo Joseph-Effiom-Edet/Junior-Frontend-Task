@@ -8,7 +8,7 @@ const CartConsumer = CartContext.Consumer;
 
 class LoadingProvider extends Component {
   state = {
-    filter: localStorage.getItem("filter") || "clothes",
+    filter: localStorage.getItem("filter") || "all",
     select: 0,
     clickedPrice: false,
   };
@@ -25,6 +25,7 @@ class LoadingProvider extends Component {
     this.setState({
       ...this.state,
       select: index,
+      clickedPrice: false,
     });
   };
 
@@ -77,11 +78,26 @@ class CartProvider extends Component {
   };
 
   selectedItem = (props, props2) => {
-    const exists = this.state.cartItem.find((x) => x.cartId === props.cartId);
+    // console.log(props);
+    console.log(props2);
+    const exists = this.state.cartItem.find(
+      (x) =>
+        x.id === props.id &&
+        x.color === props2.color &&
+        x.others0 === props2.others0 &&
+        x.others1 === props2.others1 &&
+        x.others2 === props2.others2
+    );
     if (exists) {
       this.setState({
         cartItem: this.state.cartItem.map((x) =>
-          x.cartId === props.cartId ? { ...exists, qty: exists.qty + 1 } : x
+          x.id === props.id &&
+          x.color === props2.color &&
+          x.others0 === props2.others0 &&
+          x.others1 === props2.others1 &&
+          x.others2 === props2.others2
+            ? { ...exists, qty: exists.qty + 1 }
+            : x
         ),
         qty: this.state.qty + 1,
       });
@@ -122,7 +138,7 @@ class CartProvider extends Component {
   };
 
   render() {
-    console.log(this.state.cartItem);
+    // console.log(this.state.cartItem);
     const { cartItem, qty } = this.state;
     const { selectedItem, removeItem } = this;
     return (

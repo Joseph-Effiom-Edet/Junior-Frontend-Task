@@ -35,6 +35,7 @@ class DescriptionLayout extends Component {
             <Query
               query={productQuery}
               variables={{ id: this.props.productid }}
+              fetchPolicy="network-only"
             >
               {({ loading, error, data }) => {
                 if (loading) {
@@ -141,13 +142,15 @@ class DescriptionLayout extends Component {
                                                   color: "white",
                                                 }
                                               : value ===
-                                                this.state.attributes.others1 && index === 1
+                                                  this.state.attributes
+                                                    .others1 && index === 1
                                               ? {
                                                   backgroundColor: "black",
                                                   color: "white",
                                                 }
                                               : value ===
-                                                this.state.attributes.others2 && index === 2
+                                                  this.state.attributes
+                                                    .others2 && index === 2
                                               ? {
                                                   backgroundColor: "black",
                                                   color: "white",
@@ -211,10 +214,7 @@ class DescriptionLayout extends Component {
                                   this.state.attributes.color.length > 0 &&
                                   this.state.attributes.others0.length > 0
                                 ) {
-                                  selectedItem(
-                                    product,
-                                    this.state.attributes,
-                                  );
+                                  selectedItem(product, this.state.attributes);
                                 } else {
                                   return;
                                 }
@@ -223,18 +223,12 @@ class DescriptionLayout extends Component {
                                   this.state.attributes.color.length > 0 ||
                                   this.state.attributes.others0.length > 0
                                 ) {
-                                  selectedItem(
-                                    product,
-                                    this.state.attributes,
-                                  );
+                                  selectedItem(product, this.state.attributes);
                                 } else {
                                   return;
                                 }
                               } else if (product.attributes.length < 1) {
-                                selectedItem(
-                                  product,
-                                  this.state,
-                                );
+                                selectedItem(product, this.state.attributes);
                               } else if (
                                 product.attributes.length > 2 &&
                                 product.attributes.type !== "swatch"
@@ -245,10 +239,7 @@ class DescriptionLayout extends Component {
                                   this.state.attributes.others1.length > 0 &&
                                   this.state.attributes.others2.length > 0
                                 ) {
-                                  selectedItem(
-                                    product,
-                                    this.state.attributes,
-                                  );
+                                  selectedItem(product, this.state.attributes);
                                 } else {
                                   return;
                                 }

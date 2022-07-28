@@ -5,15 +5,21 @@ import { CartContext } from "../helper/Context";
 
 class ProductItem extends Component {
   constructor(props) {
-    // console.log(props);
     super(props);
+    const colorAttributes = props.item.attributes
+      .filter((x) => x.type === "swatch")
+      .map((x) => x.items[0].value);
+    const otherAttributes = props.item.attributes
+      .filter((x) => x.type !== "swatch")
+      .map((x) => x.items[0].value);
+    // console.log(props);
     this.state = {
       isMousedOver: false,
       attributes: {
-        color: "",
-        others0: "",
-        others1: "",
-        others2: "",
+        color: props.item.attributes.length === 2 ? colorAttributes[0] : "",
+        others0: props.item.attributes.length > 0 ? otherAttributes[0] : "",
+        others1: props.item.attributes.length > 2 ? otherAttributes[1] : "",
+        others2: props.item.attributes.length > 2 ? otherAttributes[2] : "",
       },
     };
   }
@@ -31,6 +37,7 @@ class ProductItem extends Component {
   }
 
   render() {
+    // console.log(this.state.attributes.color);
     const { selectedItem } = this.context;
     return (
       <div
@@ -46,6 +53,7 @@ class ProductItem extends Component {
               className="product-image"
             />
             <h4>{this.props.item.name}</h4>
+            <h4>{this.props.item.brand}</h4>
             {this.props.item.inStock ? null : (
               <p className="stock">Out Of Stock</p>
             )}

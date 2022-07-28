@@ -5,7 +5,7 @@ import { LoadingContext } from "../helper/Context";
 
 class PriceSelectionModal extends Component {
   render() {
-    const {selection} = this.context; 
+    const { selection } = this.context;
     return (
       <Query query={Currency}>
         {({ loading, error, data }) => {
@@ -19,9 +19,15 @@ class PriceSelectionModal extends Component {
               <div className="currency-modal">
                 {currencies.map((currency, index) => {
                   return (
-                    <div key={currency.label}><p onClick={() => selection(index)}>
-                      {currency.symbol} {currency.label}
-                    </p></div>
+                    <div key={currency.label}>
+                      <p
+                        onClick={() => {
+                          selection(index);
+                        }}
+                      >
+                        {currency.symbol} {currency.label}
+                      </p>
+                    </div>
                   );
                 })}
               </div>
@@ -35,4 +41,4 @@ class PriceSelectionModal extends Component {
 
 PriceSelectionModal.contextType = LoadingContext;
 
-export default PriceSelectionModal
+export default PriceSelectionModal;

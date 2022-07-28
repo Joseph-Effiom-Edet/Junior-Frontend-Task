@@ -34,9 +34,17 @@ class Navbar extends Component {
     const { qty } = this.context;
     return (
       <LoadingConsumer>
-        {({load, select, clickedPrice, priceClick, outsidePriceClick }) => {
+        {({ load, select, clickedPrice, priceClick, outsidePriceClick }) => {
           return (
-            <div ref={this.navRef} className="nav-container" onClick={(e) => {if(this.navRef.current === e.target){outsidePriceClick()}}}>
+            <div
+              ref={this.navRef}
+              className="nav-container"
+              onClick={(e) => {
+                if (this.navRef.current === e.target) {
+                  outsidePriceClick();
+                }
+              }}
+            >
               <Query query={categoriesQuery}>
                 {({ loading, error, data }) => {
                   if (loading) {
@@ -47,19 +55,17 @@ class Navbar extends Component {
                     const categories = data.categories;
                     return (
                       <ul className="nav-list">
-                        {categories
-                          .filter((cat) => {
-                            return cat.name !== "all";
-                          })
-                          .map((cat) => {
-                            return (
-                              <li key={cat.name} >
-                                <Link to="/">
-                                  <p onClick={(e) => load(e)}>{cat.name.toUpperCase()}</p>
-                                </Link>
-                              </li>
-                            );
-                          })}
+                        {categories.map((cat) => {
+                          return (
+                            <li key={cat.name}>
+                              <Link to="/">
+                                <p onClick={(e) => load(e)}>
+                                  {cat.name.toUpperCase()}
+                                </p>
+                              </Link>
+                            </li>
+                          );
+                        })}
                       </ul>
                     );
                   }
